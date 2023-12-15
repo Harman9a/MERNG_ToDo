@@ -1,63 +1,33 @@
-import React, { useState } from "react";
-import { Button, Col, Form, Input, Row } from "antd";
-import { gql, useMutation, useQuery } from "@apollo/client";
-
-const GET_TODO = gql`
-  mutation AllToDo($name: String!) {
-    AllToDo {
-      name
-    }
-  }
-`;
+import { useQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
+import ToDoList from "../components/ToDoList";
+import { GET_TODOS } from "../GraphQL/Query";
 
 const Home = () => {
-  const { loading, error, data } = useQuery(GET_TODO);
+  const [toDoListArr, setToDoListArr] = useState([]);
+  const [toDoLoading, setToDoLoading] = useState(true);
+  const { loading, data } = useQuery(GET_TODOS);
 
-  //   const onFinish = (values) => {
-  //     console.log(values);
-
-  //   };
-
-  //   const onFinishFailed = (errorInfo) => {
-  //     console.log("Failed:", errorInfo);
-  //   };
-
-  console.log(loading, error, data);
+  useEffect(() => {
+    if (data !== undefined) {
+      setToDoListArr(data.AllToDo);
+      setToDoLoading(loading);
+    }
+  }, [data]);
 
   return (
-    <Row style={{ padding: "2rem" }}>
-      <Col span={24} style={{ display: "flex", justifyContent: "center" }}>
-        {JSON.stringify(data)}
-        {/* <Form
-          layout="inline"
-          name="basic"
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
-          <Form.Item
-            name="todo"
-            rules={[
-              {
-                required: true,
-                message: "Please input your Todo!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>-
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-        </Form> */}
-      </Col>
-    </Row>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        padding: "2rem",
+      }}
+    >
+      <div style={{ width: "50%" }}>
+        <ToDoList loadingToDo={toDoLoading} ToDoData={toDoListArr} />
+      </div>
+    </div>
   );
 };
+
 export default Home;

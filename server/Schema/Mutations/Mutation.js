@@ -18,6 +18,15 @@ const Mutation = new GraphQLObjectType({
         return result.save();
       },
     },
+    deleteTodo: {
+      type: ToDoType,
+      args: {
+        id: { type: GraphQLID },
+      },
+      resolve(parent, args) {
+        return ToDoMongo.findByIdAndDelete(args.id);
+      },
+    },
   },
 });
 
